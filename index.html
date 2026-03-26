@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>醫院常見點滴種類介紹 - 醫療資訊網</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>醫院點滴種類圖鑑</h1>
+            <p>專業醫學資訊整理：中英文名稱、成分與適應症</p>
+        </div>
+    </header>
+
+    <nav class="filter-bar">
+        <div class="container">
+            <input type="text" id="searchInput" placeholder="搜尋點滴名稱、成分或適應症...">
+            <div class="filter-buttons">
+                <button class="btn active" data-filter="all">全部</button>
+                <button class="btn" data-filter="電解質">電解質/等張</button>
+                <button class="btn" data-filter="醣類">醣類/熱量</button>
+                <button class="btn" data-filter="綜合">台大號系列</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section id="iv-grid" class="grid">
+            <!-- 點滴卡片將由 JavaScript 動態生成 -->
+        </section>
+    </main>
+
+    <footer class="container">
+        <p>© 2024 醫療資訊教育平台 - 僅供教學與學術參考，用藥請遵醫囑。</p>
+    </footer>
+
+    <!-- 彈出視窗：詳細資訊 -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div id="modal-detail"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
