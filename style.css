@@ -1,151 +1,123 @@
 :root {
-    --primary-color: #005a8d;
-    --secondary-color: #00a896;
-    --bg-color: #f4f7f6;
-    --card-bg: #ffffff;
-    --text-color: #333;
+    --primary: #2c3e50;
+    --accent: #3498db;
+    --bg: #f8f9fa;
+    --text: #2d3436;
 }
 
 body {
-    font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
+    font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+    background: var(--bg);
     margin: 0;
-    line-height: 1.6;
+    color: var(--text);
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
+.container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
 
 header {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: var(--primary);
     color: white;
-    text-align: center;
     padding: 40px 0;
+    text-align: center;
+    border-bottom: 5px solid var(--accent);
 }
 
-.filter-bar {
+.search-section {
+    margin: -30px auto 30px;
     background: white;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
-#searchInput {
+.search-box {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+#mainSearch {
     width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
-}
-
-.filter-buttons .btn {
-    padding: 8px 20px;
-    margin-right: 10px;
-    border: none;
-    background: #e0e0e0;
-    cursor: pointer;
-    border-radius: 20px;
+    padding: 15px 50px 15px 20px;
+    font-size: 18px;
+    border: 2px solid #ddd;
+    border-radius: 30px;
+    outline: none;
     transition: 0.3s;
 }
 
-.filter-buttons .btn.active, .filter-buttons .btn:hover {
-    background: var(--primary-color);
-    color: white;
+#mainSearch:focus { border-color: var(--accent); }
+
+.search-icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
 }
 
-.grid {
+.category-tabs { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.tab-btn {
+    padding: 8px 18px;
+    border: none;
+    background: #eee;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.tab-btn.active { background: var(--accent); color: white; }
+
+.grid-layout {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 25px;
-    margin-top: 30px;
+    padding-bottom: 50px;
 }
 
-.card {
-    background: var(--card-bg);
+.iv-card {
+    background: white;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    transition: transform 0.3s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: transform 0.2s;
     cursor: pointer;
+    border: 1px solid #eee;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-}
+.iv-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
 
-.card-img {
-    height: 200px;
-    background-color: #eee;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 50px;
-}
+.iv-thumb { width: 100%; height: 160px; object-fit: cover; background: #ddd; }
 
-.card-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
+.iv-info { padding: 15px; }
 
-.card-content {
-    padding: 20px;
-}
+.iv-info h3 { margin: 0 0 5px; font-size: 1.1rem; color: var(--primary); }
 
-.card-content h3 {
-    margin: 0 0 10px;
-    color: var(--primary-color);
-    font-size: 1.2rem;
-}
+.tag { font-size: 12px; background: #e1f5fe; color: #0288d1; padding: 2px 8px; border-radius: 4px; }
 
-.tag {
-    display: inline-block;
-    background: #e8f4f8;
-    color: var(--primary-color);
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    margin-bottom: 10px;
-}
-
-/* Modal styles */
+/* Modal */
 .modal {
     display: none;
     position: fixed;
-    z-index: 200;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.7);
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 1000;
 }
 
-.modal-content {
+.modal-card {
     background: white;
-    margin: 5% auto;
-    padding: 30px;
-    width: 80%;
-    max-width: 700px;
-    border-radius: 10px;
+    width: 90%;
+    max-width: 650px;
+    margin: 50px auto;
+    border-radius: 15px;
     position: relative;
+    padding: 30px;
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
-.close-btn {
+.close-modal {
     position: absolute;
-    right: 20px;
-    top: 10px;
-    font-size: 28px;
-    cursor: pointer;
-}
-
-footer {
-    text-align: center;
-    padding: 40px;
-    color: #888;
+    top: 15px; right: 20px;
+    font-size: 30px; border: none; background: none; cursor: pointer;
 }
