@@ -1,9 +1,9 @@
 const IV_DATABASE = [
     {
         id: 1,
-        name: "生理食鹽水 (0.9% NS)",
-        engName: "Normal Saline 0.9%",
-        brand: "大塚諾沙林 (Norm-Saline)",
+        name: "生理食鹽水",
+        engName: "Normal Saline",
+        brand: "諾沙林 (Norm Saline)",
         generic: "Sodium Chloride 0.9%",
         category: "電解質",
         ingredients: "Sodium Chloride 0.9g / 100mL (Na+ 154, Cl- 154 mEq/L)",
@@ -13,9 +13,9 @@ const IV_DATABASE = [
     },
     {
         id: 2,
-        name: "5% 葡萄糖注射液 (D5W)",
-        engName: "5% Dextrose in Water",
-        brand: "大塚滴滋樂 (Dextrose 5%)",
+        name: "5% 葡萄糖注射液",
+        engName: "5% Dextrose in Water (D5W)",
+        brand: "滴滋樂 (Dextrose 5%)",
         generic: "Glucose (Dextrose) 5%",
         category: "醣類",
         ingredients: "Dextrose 5g / 100mL (熱量：170 kcal/L)",
@@ -25,9 +25,9 @@ const IV_DATABASE = [
     },
     {
         id: 3,
-        name: "乳酸林格爾氏液 (LR)",
+        name: "乳酸林格爾氏液",
         engName: "Lactated Ringer's Solution",
-        brand: "信東乳酸林格爾",
+        brand: "福多命安",
         generic: "Compound Sodium Lactate",
         category: "電解質",
         ingredients: "Na+ 130, K+ 4, Ca2+ 3, Cl- 109, Lactate 28 (mEq/L)",
