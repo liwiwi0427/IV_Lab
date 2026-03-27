@@ -81,3 +81,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初始載入
     render();
 });
+
+window.onload = function() {
+    if (!localStorage.getItem('disclaimerAccepted')) {
+        alert("【使用提醒】\n本網站資訊僅供參考，不代表醫療建議。\n使用任何藥品前請務必參照醫院規範與原廠仿單。");
+        localStorage.setItem('disclaimerAccepted', 'true');
+    }
+};
