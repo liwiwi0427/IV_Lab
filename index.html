@@ -1,50 +1,26 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>醫院點滴種類互動手冊</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <header>
-        <div class="container">
-            <h1>🏥 醫院點滴種類介紹系統</h1>
-            <p>醫護人員與學生適用的快速查閱手冊</p>
+// 修改 render 函數中生成卡片的 HTML
+card.innerHTML = `
+    <img src="${item.image}" class="iv-thumb" alt="${item.brand}">
+    <div class="iv-info">
+        <!-- 處理多個標籤 -->
+        <div class="tags">
+            ${item.categories.map(cat => `<span class="tag">${cat}</span>`).join('')}
         </div>
-    </header>
-
-    <div class="search-section container">
-        <div class="search-box">
-            <input type="text" id="mainSearch" placeholder="輸入名稱、縮寫 (如 NS, LR) 或適應症 (如 脫水)...">
-            <span class="search-icon">🔍</span>
-        </div>
-        
-        <div class="category-tabs" id="categoryTabs">
-            <button class="tab-btn active" data-cat="all">全部</button>
-            <button class="tab-btn" data-cat="電解質">電解質</button>
-            <button class="tab-btn" data-cat="醣類">醣類</button>
-            <button class="tab-btn" data-cat="綜合">綜合維持液</button>
-            <button class="tab-btn" data-cat="營養">營養/特殊</button>
-        </div>
+        <h3 style="margin-top:8px;">${item.brand}</h3>
+        <p style="font-size:0.9rem; margin:0;">${item.name} (${item.generic})</p>
     </div>
+`;
 
-    <main class="container">
-        <div id="resultsCount"></div>
-        <div id="ivGrid" class="grid-layout">
-            <!-- 由 JS 生成卡片 -->
-        </div>
-    </main>
-
-    <!-- 詳情 Modal -->
-    <div id="ivModal" class="modal">
-        <div class="modal-card">
-            <button class="close-modal">&times;</button>
-            <div id="modalContent"></div>
-        </div>
-    </div>
-
-    <script src="data.js"></script>
-    <script src="script.js"></script>
-</body>
-</html>
+// 修改 openModal 函數
+function openModal(item) {
+    modalContent.innerHTML = `
+        <h2 style="color:#2980b9; margin:0;">${item.brand}</h2>
+        <p style="color:#666;">學名：${item.generic} | 常用縮寫：${item.name}</p>
+        <hr>
+        <p><strong>🧪 成分組成：</strong><br>${item.ingredients}</p>
+        <p><strong>⚡ 電解質濃度 (mEq/L)：</strong><br><span style="color:#e67e22; font-family:monospace;">${item.electrolytes || '無資料'}</span></p>
+        <p><strong>🩺 適應症：</strong><br>${item.indications}</p>
+        <p><strong>⚠️ 注意事項：</strong><br>${item.precaution}</p>
+    `;
+    modal.style.display = 'block';
+}
