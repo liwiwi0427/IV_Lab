@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>點滴資料庫管理後台</title>
+    <!-- 引入 Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --sidebar-width: 320px;
+            --admin-primary: #007aff;
+            --admin-success: #34c759;
+            --admin-danger: #ff3b30;
+            --admin-bg: #f2f2f7;
+            --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--admin-bg);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 側邊欄樣式 */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            border-right: 1px solid #d1d1d6;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: var(--primary);
+            color: white;
+        }
+
+        .sidebar-header h2 { margin: 0; font-size: 1.2rem; }
+
+        .search-wrapper {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        #listSearch {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+
+        .item-list-container {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .list-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f2f2f7;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .list-item:hover { background: #f0f7ff; }
+        .list-item.active { 
+            background: #e5f1ff; 
+            border-left: 5px solid var(--admin-primary); 
+        }
+
+        .list-item .item-name { font-weight: 500; color: #333; }
+        .list-item .item-cat { font-size: 0.75rem; color: #8e8e93; }
+
+        /* 主編輯區 */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .edit-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f2f2f7;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .full-width { grid-column: span 2; }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #48484a;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid #d1d1d6;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: var(--admin-primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
+        }
+
+        /* 按鈕設計 */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary { background: var(--admin-primary); color: white; }
+        .btn-success { background: var(--admin-success); color: white; }
+        .btn-danger { background: #fff; color: var(--admin-danger); border: 1px solid var(--admin-danger); }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        /* 代碼產生區 */
+        .export-section {
+            background: #1c1c1e;
+            color: #32d74b;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        #outputCode {
+            width: 100%;
+            height: 120px;
+            background: transparent;
+            color: #32d74b;
+            border: 1px solid #3a3a3c;
+            font-family: 'Courier New', monospace;
+            margin-top: 15px;
+            resize: none;
+        }
+
+        .copy-hint { font-size: 0.8rem; color: #8e8e93; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <!-- 左側清單 -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>🏥 資料庫管理</h2>
+            <p style="font-size: 0.8rem; opacity: 0.8;">管理醫院點滴目錄</p>
+        </div>
+        <div class="search-wrapper">
+            <input type="text" id="listSearch" placeholder="🔍 搜尋清單項目..." oninput="filterList()">
+        </div>
+        <div class="item-list-container" id="sidebarList">
+            <!-- JS 動態生成 -->
+        </div>
+        <div style="padding: 15px; border-top: 1px solid #eee;">
+            <button class="btn btn-primary" style="width: 100%;" onclick="addNewItem()">➕ 新增點滴項目</button>
+        </div>
+    </aside>
+
+    <!-- 右側編輯 -->
+    <main class="main-content">
+        <div class="toolbar">
+            <h1 id="editStatus">請選擇要編輯的項目</h1>
+            <a href="index.html" class="btn" style="background: #e5e5ea; color: #333;">🚪 退出編輯器</a>
+        </div>
+
+        <div id="editorUI" style="display: none;">
+            <form id="editorForm">
+                <input type="hidden" id="f_id">
+                
+                <!-- 基本資訊 -->
+                <div class="edit-card">
+                    <div class="section-title">📦 基本資訊設定</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>點滴中文名稱</label>
+                            <input type="text" id="f_name">
+                        </div>
+                        <div class="form-group">
+                            <label>分類標籤</label>
+                            <select id="f_category">
+                                <option value="電解質">電解質 (Electrolytes)</option>
+                                <option value="醣類">醣類 (Dextrose)</option>
+                                <option value="綜合">綜合 (Maintenance)</option>
+                                <option value="營養">營養 (Nutrition)</option>
+                                <option value="特殊">特殊 (Special)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>英文學名 / 縮寫</label>
+                            <input type="text" id="f_engName">
+                        </div>
+                        <div class="form-group">
+                            <label>商品名 / 廠牌</label>
+                            <input type="text" id="f_brand">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>圖片路徑 (建議放置於 images/ 資料夾內)</label>
+                            <input type="text" id="f_image" placeholder="例如: images/ns_bag.jpg">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 臨床資訊 -->
+                <div class="edit-card" style="margin-top: 20px;">
+                    <div class="section-title">🩺 臨床與成分資料</div>
+                    <div class="form-group">
+                        <label>詳細成分組成 (每 100ml 或 mEq/L)</label>
+                        <textarea id="f_ingredients" rows="2"></textarea>
+                    </div>
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label>臨床適應症</label>
+                        <textarea id="f_indications" rows="3"></textarea>
+                    </div>
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label>臨床注意事項 / 禁忌</label>
+                        <textarea id="f_precaution" rows="2"></textarea>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <button type="button" class="btn btn-danger" onclick="deleteCurrentItem()">🗑️ 刪除此項目</button>
+                    <button type="button" class="btn btn-success" style="padding: 15px 40px;" onclick="saveToMemory()">💾 暫存修改並套用</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 匯出區域 -->
+        <div class="export-section">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin:0;">🚀 生成資料庫代碼</h3>
+                <button class="btn btn-primary" onclick="generateAndCopy()">生成並複製代碼</button>
+            </div>
+            <textarea id="outputCode" readonly placeholder="暫存修改後，點擊上方按鈕生成代碼..."></textarea>
+            <div class="copy-hint">
+                點擊按鈕後，請開啟 <strong>data.js</strong> 並覆蓋所有內容，然後存檔。
+            </div>
+        </div>
+    </main>
+
+    <script src="data.js"></script>
+    <script>
+        let localDB = [...IV_DATABASE];
+        let currentId = null;
+
+        function init() { renderSidebar(); }
+
+        // 過濾列表
+        function filterList() {
+            const term = document.getElementById('listSearch').value.toLowerCase();
+            renderSidebar(term);
+        }
+
+        // 渲染側邊欄
+        function renderSidebar(term = "") {
+            const listDiv = document.getElementById('sidebarList');
+            listDiv.innerHTML = '';
+            
+            const filtered = localDB.filter(item => 
+                item.name.toLowerCase().includes(term) || 
+                item.category.toLowerCase().includes(term)
+            );
+
+            filtered.forEach(item => {
+                const div = document.createElement('div');
+                div.className = `list-item ${item.id === currentId ? 'active' : ''}`;
+                div.innerHTML = `
+                    <div>
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-cat">${item.category}</div>
+                    </div>
+                    <span>❯</span>
+                `;
+                div.onclick = () => loadItem(item.id);
+                listDiv.appendChild(div);
+            });
+        }
+
+        // 載入編輯項目
+        function loadItem(id) {
+            currentId = id;
+            const item = localDB.find(i => i.id === id);
+            document.getElementById('editorUI').style.display = 'block';
+            document.getElementById('editStatus').innerText = "正在編輯：" + item.name;
+            
+            // 填充表單
+            const fields = ['id','name','engName','brand','category','image','ingredients','indications','precaution'];
+            fields.forEach(f => document.getElementById('f_' + f).value = item[f] || '');
+            
+            renderSidebar();
+        }
+
+        // 新增項目
+        function addNewItem() {
+            const newId = localDB.length > 0 ? Math.max(...localDB.map(i => i.id)) + 1 : 1;
+            const newItem = {
+                id: newId,
+                name: "未命名點滴",
+                category: "電解質",
+                image: "images/placeholder.jpg"
+            };
+            localDB.push(newItem);
+            loadItem(newId);
+        }
+
+        // 暫存修改
+        function saveToMemory() {
+            const id = parseInt(document.getElementById('f_id').value);
+            const index = localDB.findIndex(i => i.id === id);
+            if (index !== -1) {
+                const fields = ['name','engName','brand','category','image','ingredients','indications','precaution'];
+                fields.forEach(f => localDB[index][f] = document.getElementById('f_' + f).value);
+                
+                alert('✅ 暫存成功！');
+                renderSidebar();
+            }
+        }
+
+        // 刪除項目
+        function deleteCurrentItem() {
+            if(confirm('確定要永久刪除此點滴資料嗎？')) {
+                localDB = localDB.filter(i => i.id !== currentId);
+                document.getElementById('editorUI').style.display = 'none';
+                document.getElementById('editStatus').innerText = "請選擇要編輯的項目";
+                currentId = null;
+                renderSidebar();
+            }
+        }
+
+        // 生成與複製
+        function generateAndCopy() {
+            const code = `const IV_DATABASE = ${JSON.stringify(localDB, null, 4)};`;
+            const textArea = document.getElementById('outputCode');
+            textArea.value = code;
+            textArea.select();
+            document.execCommand('copy');
+            alert('🚀 代碼已生成並成功複製到剪貼簿！\n請打開 data.js 並貼上覆蓋。');
+        }
+
+        init();
+    </script>
+</body>
+</html>
